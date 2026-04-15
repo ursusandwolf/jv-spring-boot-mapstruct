@@ -7,6 +7,7 @@ import mate.academy.mapstruct.dto.student.StudentDto;
 import mate.academy.mapstruct.dto.student.StudentWithoutSubjectsDto;
 import mate.academy.mapstruct.model.Student;
 import mate.academy.mapstruct.model.Subject;
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.Mapping;
@@ -20,15 +21,20 @@ public interface StudentMapper {
     StudentWithoutSubjectsDto toStudentWithoutSubjectsDto(Student student);
 
     @Mapping(target = "group", source = "groupId", qualifiedByName = "groupById")
-    @Mapping(target = "subjects", source = "subjects", qualifiedByName = "subjectById")
     Student toModel(CreateStudentRequestDto requestDto);
 
-    default void setSubjects(List<Long> subjectsId, Student student){
-        ArrayList<Subject> subjects = new ArrayList<>(subjectsId.size());
-        for (Long id : subjectsId) {
-            Subject subject = new Subject(id);
-            subjects.add(subject);
-        }
+    default void setSubjectsId(StudentDto dto, Student student){
+        List<Long> subjectsId = student.getSubjects().stream()
+                .map(Subject::getId)
+                .toList();
+        dto.setSubjectIds(subjectsId);
+    }
+
+    @AfterMapping
+    default void setSubjects(CreateStudentRequestDto requestDto, Student student){
+        List<Subject> subjects = requestDto.subjects().stream()
+                .map(Subject::new)
+                .toList();
         student.setSubjects(subjects);
     }
 }
