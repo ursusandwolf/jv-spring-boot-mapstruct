@@ -11,7 +11,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(uses = GroupMapper.class)
+@Mapper(componentModel = "spring", uses = StudentMapper.class)
 public interface StudentMapper {
     @Mapping(source = "group.id", target = "groupId")
     @Mapping(target = "subjectIds", ignore = true)

@@ -7,7 +7,7 @@ import mate.academy.mapstruct.model.Group;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = GroupMapper.class)
 public interface GroupMapper {
     GroupDto toDto(Group group);
 

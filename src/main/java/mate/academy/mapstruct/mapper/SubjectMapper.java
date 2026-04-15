@@ -7,7 +7,7 @@ import mate.academy.mapstruct.model.Subject;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 
-@Mapper
+@Mapper(componentModel = "spring", uses = SubjectMapper.class)
 public interface SubjectMapper {
     SubjectDto toDto(Subject subject);
 
