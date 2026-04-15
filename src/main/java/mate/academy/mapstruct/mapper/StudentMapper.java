@@ -11,27 +11,31 @@ import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MapperConfig;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 
 @Mapper(config = MapperConfig.class, uses = GroupMapper.class)
 public interface StudentMapper {
     @Mapping(source = "group.id", target = "groupId")
+    @Mapping(target = "subjectIds", ignore = true)
     StudentDto toDto(Student student);
 
-    @Mapping(source = "group.id", target = "groupId")
-    StudentWithoutSubjectsDto toStudentWithoutSubjectsDto(Student student);
-
-    @Mapping(target = "group", source = "groupId", qualifiedByName = "groupById")
-    Student toModel(CreateStudentRequestDto requestDto);
-
-    default void setSubjectsId(StudentDto dto, Student student){
+    @AfterMapping
+    default void setSubjectsId(@MappingTarget StudentDto dto, Student student){
         List<Long> subjectsId = student.getSubjects().stream()
                 .map(Subject::getId)
                 .toList();
         dto.setSubjectIds(subjectsId);
     }
 
+    @Mapping(source = "group.id", target = "groupId")
+    StudentWithoutSubjectsDto toStudentWithoutSubjectsDto(Student student);
+
+    @Mapping(target = "group", source = "groupId", qualifiedByName = "groupById")
+    @Mapping(target = "subjects", ignore = true)
+    Student toModel(CreateStudentRequestDto requestDto);
+
     @AfterMapping
-    default void setSubjects(CreateStudentRequestDto requestDto, Student student){
+    default void setSubjects(@MappingTarget Student student, CreateStudentRequestDto requestDto){
         List<Subject> subjects = requestDto.subjects().stream()
                 .map(Subject::new)
                 .toList();
