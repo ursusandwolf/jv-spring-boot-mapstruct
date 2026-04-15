@@ -1,6 +1,5 @@
 package mate.academy.mapstruct.mapper;
 
-import java.util.ArrayList;
 import java.util.List;
 import mate.academy.mapstruct.dto.student.CreateStudentRequestDto;
 import mate.academy.mapstruct.dto.student.StudentDto;
@@ -9,18 +8,17 @@ import mate.academy.mapstruct.model.Student;
 import mate.academy.mapstruct.model.Subject;
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
-import org.mapstruct.MapperConfig;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
-@Mapper(config = MapperConfig.class, uses = GroupMapper.class)
+@Mapper(uses = GroupMapper.class)
 public interface StudentMapper {
     @Mapping(source = "group.id", target = "groupId")
     @Mapping(target = "subjectIds", ignore = true)
     StudentDto toDto(Student student);
 
     @AfterMapping
-    default void setSubjectsId(@MappingTarget StudentDto dto, Student student){
+    default void setSubjectsId(@MappingTarget StudentDto dto, Student student) {
         List<Long> subjectsId = student.getSubjects().stream()
                 .map(Subject::getId)
                 .toList();
@@ -35,7 +33,7 @@ public interface StudentMapper {
     Student toModel(CreateStudentRequestDto requestDto);
 
     @AfterMapping
-    default void setSubjects(@MappingTarget Student student, CreateStudentRequestDto requestDto){
+    default void setSubjects(@MappingTarget Student student, CreateStudentRequestDto requestDto) {
         List<Subject> subjects = requestDto.subjects().stream()
                 .map(Subject::new)
                 .toList();
